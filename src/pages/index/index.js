@@ -9,6 +9,7 @@ import {connect} from '@tarojs/redux'
 import action from '../../utils/action'
 
 @connect(({feeds, loading}) => ({
+
   ...feeds,
   isLoad: loading.effects["feeds/load"],
   isLoadMore: loading.effects["feeds/loadMore"],
@@ -41,7 +42,9 @@ export default class Index extends Component {
   };
 
   render() {
-    const {list = [], isLoad, isLoadMore} = this.props;
+    const {newStories, isLoad, isLoadMore} = this.props;
+    const list = newStories['STORIES']['stories']
+    console.log(list)
     return (
       <View>
         <View className='search flex-wrp'>
@@ -61,14 +64,9 @@ export default class Index extends Component {
             list.length ?
               list.map(item => {
                 return <Feed
-                  key={item}
-                  feed_source_img={item.feed_source_img}
-                  feed_source_name={item.feed_source_name}
-                  feed_source_txt={item.feed_source_txt}
-                  question={item.question}
-                  answer_ctnt={item.answer_ctnt}
-                  good_num={item.good_num}
-                  comment_num={item.comment_num}
+                  key={item.id}
+                  image={item.images[0]}
+                  title={item.title}
                 />
               }) :
               isLoad ? <View>加载中...</View> : <View>没有数据</View>

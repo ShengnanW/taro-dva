@@ -62,7 +62,6 @@ class App extends Component {
   }
 
   componentDidMount() {
-    dvaApp.dispatch({type: 'sys/test'})
   }
 
   componentDidShow() {

@@ -5,7 +5,9 @@ import delay from "../utils/delay";
 
 export default {
   namespace: 'feeds',
-  state: {list: []},
+  state: {
+    newStories:{}
+  },
   reducers: {
     save(state, {payload}) {
       return {...state, ...payload};
@@ -27,11 +29,11 @@ export default {
       }
     },
     * load({payload}, {all, call, put}) {
-      let {data} = yield call(request, {
-        url: 'https://easy-mock.com/mock/5b21d97f6b88957fa8a502f2/example/feed'
+      let data = yield call(request, {
+        url: 'https://zhihu-daily.leanapp.cn/api/v1/last-stories'
       });
-      yield call(delay, 2000);//增加延迟测试效果
-      yield put(action("save", {list: data}))
+      // yield call(delay, 2000);//增加延迟测试效果
+      yield put(action("save", {newStories: data}))
     },
     * loadMore({payload}, {all, call, put}) {
       let {data} = yield call(request, {
