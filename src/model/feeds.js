@@ -32,6 +32,9 @@ export default {
       let data = yield call(request, {
         url: 'https://zhihu-daily.leanapp.cn/api/v1/last-stories'
       });
+      const stories = yield call(request, {
+        url: 'https://zhihu-daily.leanapp.cn/api/v1/before-stories/20190312'
+      })
       // yield call(delay, 2000);//增加延迟测试效果
       yield put(action("save", {newStories: data}))
     },

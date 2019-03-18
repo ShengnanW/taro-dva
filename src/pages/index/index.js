@@ -1,16 +1,18 @@
 import Taro, {Component} from '@tarojs/taro'
-import {View, ScrollView, Input, Image} from '@tarojs/components'
+import {View, ScrollView, Input, Image, Swiper, SwiperItem} from '@tarojs/components'
 import './index.scss'
 import Feed from '../../components/feed/feed'
+import Banner from '../../components/banner/banner'
 import searchPng from '../../asset/images/search.png'
 import lightingPng from '../../asset/images/lighting.png'
 import {create} from 'dva-core';
 import {connect} from '@tarojs/redux'
 import action from '../../utils/action'
 
-@connect(({feeds, loading}) => ({
+@connect(({feeds, loading, banner}) => ({
 
   ...feeds,
+  ...banner,
   isLoad: loading.effects["feeds/load"],
   isLoadMore: loading.effects["feeds/loadMore"],
 }))
@@ -26,6 +28,7 @@ export default class Index extends Component {
   }
 
   componentDidMount = () => {
+    this.props.dispatch(action("banner/load"));
     this.props.dispatch(action("feeds/load"));
   };
 
@@ -42,12 +45,13 @@ export default class Index extends Component {
   };
 
   render() {
-    const {newStories, isLoad, isLoadMore} = this.props;
+    const {newStories, isLoad, isLoadMore, banner} = this.props;
     const list = newStories['STORIES']['stories']
-    console.log(list)
+    // console.log(this.props)
     return (
       <View>
-        <View className='search flex-wrp'>
+        <View><Banner bannerData={banner}></Banner></View>
+        {/* <View className='search flex-wrp'>
           <View className='search-left flex-item'>
             <View className='flex-wrp'>
               <View className='flex1'><Image src={searchPng}></Image></View>
@@ -58,7 +62,7 @@ export default class Index extends Component {
           <View className='search-right flex-item'>
             <Image onClick={this.updateList} src={lightingPng}></Image>
           </View>
-        </View>
+    </View>*/}
         <View className='container'>
           {
             list.length ?

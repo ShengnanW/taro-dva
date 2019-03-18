@@ -5,6 +5,7 @@ import Index from './pages/index'
 import dva from './dva'
 import models from './model'
 import {Provider} from '@tarojs/redux'
+import 'taro-ui/dist/style/index.scss'
 
 
 import './app.scss'

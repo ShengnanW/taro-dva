@@ -1,9 +1,10 @@
 import request from "../utils/request";
+import action from "../utils/action";
 
 export default {
   namespace: 'banner',
   state: {
-    banners: []
+    banners:{}
   },
   reducers: {
     loadBanner(state, { payload }) {
@@ -11,12 +12,11 @@ export default {
     },
   },
   effects: {
-    * load(action, { call, put }) {
+    * load({payload}, { call, put }) {
       const stories = yield call(request, {
         url: 'https://zhihu-daily.leanapp.cn/api/v1/before-stories/20190312'
       })
-      const result = stories['stories']
-      yield put(action("loadBanner", {banners: result}))
+      yield put(action("loadBanner", {banner: stories['STORIES']['stories']}))
     },
   },
 }
