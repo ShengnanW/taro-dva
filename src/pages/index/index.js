@@ -1,20 +1,17 @@
-import Taro, {Component} from '@tarojs/taro'
+import Taro, {Component, hideLoading} from '@tarojs/taro'
 import {View, ScrollView, Input, Image, Swiper, SwiperItem} from '@tarojs/components'
 import './index.scss'
 import Feed from '../../components/feed/feed'
 import Banner from '../../components/banner/banner'
-import searchPng from '../../asset/images/search.png'
-import lightingPng from '../../asset/images/lighting.png'
-import {create} from 'dva-core';
 import {connect} from '@tarojs/redux'
 import action from '../../utils/action'
 
-@connect(({feeds, loading, banner}) => ({
+@connect(({feeds, banner, loading}) => ({
 
   ...feeds,
   ...banner,
   isLoad: loading.effects["feeds/load"],
-  isLoadMore: loading.effects["feeds/loadMore"],
+  isLoadMore:loading.effects["feeds/loadMore"]
 }))
 export default class Index extends Component {
   config = {
@@ -25,6 +22,9 @@ export default class Index extends Component {
 
   constructor() {
     super(...arguments);
+    this.state={
+      dataCount:0,
+    }
   }
 
   componentDidMount = () => {
@@ -37,7 +37,9 @@ export default class Index extends Component {
   };
 
   onReachBottom = () => {
-    this.props.dispatch(action("feeds/loadMore"));
+    const {dataCount} = this.state
+    this.props.dispatch(action("feeds/loadMore", dataCount));
+    this.setState({dataCount: dataCount+1})
   };
 
   updateList = () => {
@@ -45,24 +47,16 @@ export default class Index extends Component {
   };
 
   render() {
-    const {newStories, isLoad, isLoadMore, banner} = this.props;
-    const list = newStories['STORIES']['stories']
-    // console.log(this.props)
+    const {newStories, isLoadMore,isLoad,banner, oldStoriesList} = this.props;
+    let list = []
+    let feedList =[]
+    if(JSON.stringify(newStories)!=='{}' && !isLoad){
+      list = newStories['STORIES']['stories']
+    }
     return (
       <View>
         <View><Banner bannerData={banner}></Banner></View>
-        {/* <View className='search flex-wrp'>
-          <View className='search-left flex-item'>
-            <View className='flex-wrp'>
-              <View className='flex1'><Image src={searchPng}></Image></View>
-              <View className='flex6'><Input type='text' placeholder={'搜索话题, 问题或人'}
-                                             placeholderClass='search-placeholder'/></View>
-            </View>
-          </View>
-          <View className='search-right flex-item'>
-            <Image onClick={this.updateList} src={lightingPng}></Image>
-          </View>
-    </View>*/}
+        <View className='hot-today'>今日热闻</View>
         <View className='container'>
           {
             list.length ?
@@ -72,12 +66,33 @@ export default class Index extends Component {
                   image={item.images[0]}
                   title={item.title}
                 />
-              }) :
-              isLoad ? <View>加载中...</View> : <View>没有数据</View>
+              }) : <View>加载中...</View>
           }
           {
             isLoadMore && <View>加载中...</View>
           }
+           {
+             oldStoriesList.length >0 ?
+             oldStoriesList.map(item => {
+               const storyItem = item['STORIES']
+              feedList = storyItem['stories']
+              console.log(feedList)
+                return(
+                  <View key={storyItem.date}>
+                  <View className='storiesDate'>{storyItem.date}</View>
+                  {
+                    feedList.map(feedItem => {
+                      return <Feed
+                      key={feedItem.id}
+                      image={feedItem.images[0]}
+                      title={feedItem.title}
+                />
+                    })
+                  }
+                  </View>
+                )
+             }) : ''
+           }
         </View>
       </View>
     )

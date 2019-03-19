@@ -1,8 +1,8 @@
-.activity{
-  width: 750px;
-  height: 375px;
-}
-.activity image,.activity img{
-  width: 750px;
-  height: 400px;
+.swiper {
+  width: 100vw;
+  height: 450px;
+  image,
+  img {
+    height: 450px !important;
+  }
 }

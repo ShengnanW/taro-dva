@@ -1,6 +1,7 @@
 import Taro from '@tarojs/taro'
 
 export default function request(opt) {
+  console.log(opt)
   return Taro.request(opt).then((res) => {
     let {statusCode, data} = res;
     if (statusCode >= 200 && statusCode < 300) {

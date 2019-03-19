@@ -6,14 +6,16 @@ import delay from "../utils/delay";
 export default {
   namespace: 'feeds',
   state: {
-    newStories:{}
+    newStories:{},
+    oldStoriesList:[]
   },
   reducers: {
     save(state, {payload}) {
       return {...state, ...payload};
     },
-    saveMore(state, {payload: list}) {
-      return {...state, list: [...state.list, ...list]};
+    saveMore(state, {payload}) {
+      state.oldStoriesList.push(payload)
+      return {...state};
     },
   },
   effects: {
@@ -32,18 +34,22 @@ export default {
       let data = yield call(request, {
         url: 'https://zhihu-daily.leanapp.cn/api/v1/last-stories'
       });
-      const stories = yield call(request, {
-        url: 'https://zhihu-daily.leanapp.cn/api/v1/before-stories/20190312'
-      })
       // yield call(delay, 2000);//增加延迟测试效果
       yield put(action("save", {newStories: data}))
     },
     * loadMore({payload}, {all, call, put}) {
-      let {data} = yield call(request, {
-        url: 'https://easy-mock.com/mock/5b21d97f6b88957fa8a502f2/example/feed'
+      const date = new Date().toLocaleString()
+      let dateStr = date.slice(0,date.indexOf(' ')).replace(/\//g,'')
+      dateStr = (dateStr.length === 7)? dateStr.slice(0,4)+'0'+dateStr.slice(4) : dateStr
+      dateStr = (dateStr.length === 6)? dateStr.slice(0,6)+'0'+dateStr.slice(6) : dateStr
+      // 这里还有细节需要完善，日期转换没有考虑十月以后月初
+      const oldDate = (parseInt(dateStr)-payload).toString()
+      let data = yield call(request, {
+        url: `https://zhihu-daily.leanapp.cn/api/v1/before-stories/${oldDate}`
+
       });
       yield call(delay, 2000);//增加延迟测试效果
-      yield put(action("saveMore", data))
+      yield put(action("saveMore", {STORIES: data['STORIES']}))
     },
   },
 };

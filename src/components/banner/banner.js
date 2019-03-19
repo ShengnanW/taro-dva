@@ -8,10 +8,10 @@ export default class Banner extends Component{
   }
   render() {
     const {bannerData} = this.props
-    console.log(bannerData)
+    // console.log(bannerData)
     return (
       <Swiper
-        className='activity'
+        className='swiper'
         indicatorColor='#999'
         indicatorActiveColor='#333'
         circular
